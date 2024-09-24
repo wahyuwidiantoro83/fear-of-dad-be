@@ -10,4 +10,6 @@ router.get("/", async (req, res) => {
   }
 });
 
+console.log("Tes");
+
 export default router;
