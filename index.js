@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import bearer from "express-bearer-token";
 
 dotenv.config();
 
@@ -9,11 +10,13 @@ const PORT = process.env.PORT || 2000;
 
 app.use(cors());
 app.use(express.json());
+app.use(bearer());
 
-import HomeRoutes from "./Routes/Home.js";
+import { HomeRoutes, AuthRoutes } from "./routes/index.js";
 
 app.use("/home", HomeRoutes);
+app.use("/auth", AuthRoutes);
 
 app.listen(PORT, () => {
-  console.log("API IS ACTIVE PORT:", PORT);
+  console.log(`🚀 Server ready at: http://localhost:${PORT}`);
 });
