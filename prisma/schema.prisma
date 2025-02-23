@@ -280,15 +280,34 @@ model WishListDetail {
   deletedAt   DateTime?
 }
 
-enum Role {
+enum RoleEnum {
   SUPER_ADMIN
   ADMIN
   USER
 }
 
-enum TokenMethod {
+enum TokenMethodEnum {
   VERIF
   RESET
+}
+
+enum GenderEnum {
+  MALE
+  FEMALE
+}
+
+model UserAddress {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @default(uuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  address     String?
+  postalCode  String?
+  lat         String?
+  long        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }
 
 model User {
@@ -301,7 +320,12 @@ model User {
   firstName   String?
   lastName    String?
   birthDate   DateTime?
-  role        Role      @default(USER)
+  gender      GenderEnum?
+  postalCode  String?
+  address     String?
+  lat         String?
+  long        String?
+  role        RoleEnum  @default(USER)
   isValidated Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -312,6 +336,7 @@ model User {
   tokens      Token[]
   carts       Cart[]
   wishLists   WishList[]
+  addresses   UserAddress[] 
 }
 
 model Token {
@@ -321,7 +346,7 @@ model Token {
   userId      Int
   isUsed      Boolean   @default(false)
   expiredAt   DateTime
-  method      TokenMethod   @default(VERIF)
+  method      TokenMethodEnum   @default(VERIF)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?

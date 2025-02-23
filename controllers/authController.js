@@ -34,7 +34,7 @@ async function loginController(req, res) {
 
 async function registerController(req, res) {
   try {
-    const { email } = req.body;
+    const { email, password, postal, birth, gender } = req.body;
     const isExist = await prisma.user.findUnique({
       where: {
         email: email,
@@ -42,9 +42,32 @@ async function registerController(req, res) {
     });
 
     if (isExist) {
-      return responseTemplate(res, 400, false);
+      return responseTemplate(res, 400, false, "Account is already exist");
     }
-  } catch (error) {}
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const result = await prisma.user.create({
+      data: {
+        email: email,
+        password: hashedPassword,
+        postalCode: postal,
+        birthDate: birth,
+        gender: gender,
+      },
+    });
+
+    return responseTemplate(
+      res,
+      201,
+      true,
+      "Register success, please validate account",
+      result
+    );
+  } catch (error) {
+    return responseTemplate(res, 500, false, "System Error");
+  }
 }
 
 export { loginController };
